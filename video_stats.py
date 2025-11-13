@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from datetime import date
 
 load_dotenv(dotenv_path="./.env")
 API_KEY = os.getenv("API_KEY")  # Sua chave
@@ -105,7 +106,14 @@ def extract_video_data(video_ids):
     except requests.exceptions.RequestException as e:
         raise e
 
+def save_to_json(extract_data):
+    file_path = f"./data/yt_data_{date.today()}.json"
+    with open(file_path, "w", encoding="utf-8") as json_outfile:
+        json.dump(extract_data, json_outfile, ensure_ascii=False, indent=4)
+
 if __name__ == "__main__":
     playlistId = get_playlist_id()
     video_ids = get_video_ids(playlistId)   
-    print(extract_video_data(video_ids))
+    video_data = extract_video_data(video_ids)
+    save_to_json(video_data)
+
